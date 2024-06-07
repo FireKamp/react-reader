@@ -53,7 +53,7 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
 
   componentDidMount() {
     this.initBook()
-    document.addEventListener('keyup', this.handleKeyPress, false)
+    document.addEventListener('keyup', props.handleKeyPress, false)
   }
 
   initBook() {
@@ -81,7 +81,7 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
       this.book.destroy()
     }
     this.book = this.rendition = this.prevPage = this.nextPage = undefined
-    document.removeEventListener('keyup', this.handleKeyPress, false)
+    document.removeEventListener('keyup', props.handleKeyPress, false)
   }
 
   shouldComponentUpdate(nextProps: IEpubViewProps) {
@@ -140,7 +140,7 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
     const { handleKeyPress, handleTextSelected } = this.props
     if (this.rendition) {
       this.rendition.on('locationChanged', this.onLocationChange)
-      this.rendition.on('keyup', handleKeyPress || this.handleKeyPress)
+      this.rendition.on('keyup', handleKeyPress)
       if (handleTextSelected) {
         this.rendition.on('selected', handleTextSelected)
       }
@@ -159,15 +159,6 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
   renderBook() {
     const { epubViewStyles = defaultStyles } = this.props
     return <div ref={this.viewerRef} style={epubViewStyles.view} />
-  }
-
-  handleKeyPress = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowRight' && this.nextPage) {
-      this.nextPage()
-    }
-    if (event.key === 'ArrowLeft' && this.prevPage) {
-      this.prevPage()
-    }
   }
 
   render() {
