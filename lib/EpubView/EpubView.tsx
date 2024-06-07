@@ -53,7 +53,7 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
 
   componentDidMount() {
     this.initBook()
-    document.addEventListener('keyup', props.handleKeyPress, false)
+    document.addEventListener('keyup', this.props.handleKeyPress, false)
   }
 
   initBook() {
@@ -81,7 +81,7 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
       this.book.destroy()
     }
     this.book = this.rendition = this.prevPage = this.nextPage = undefined
-    document.removeEventListener('keyup', props.handleKeyPress, false)
+    document.removeEventListener('keyup', this.props.handleKeyPress, false)
   }
 
   shouldComponentUpdate(nextProps: IEpubViewProps) {
