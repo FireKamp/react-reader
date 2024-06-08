@@ -25,7 +25,6 @@ export type IEpubViewProps = {
   showToc?: boolean
   tocChanged?(value: NavItem[]): void
   getRendition?(rendition: Rendition): void
-  handleKeyPress?(): void
   handleTextSelected?(cfiRange: string, contents: Contents): void
 }
 type IEpubViewState = {
@@ -42,20 +41,15 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
   location?: string | number | null
   book?: Book
   rendition?: Rendition
-  prevPage?: () => void
-  nextPage?: () => void
 
   constructor(props: IEpubViewProps) {
     super(props)
     this.location = props.location
-    this.book = this.rendition = this.prevPage = this.nextPage = undefined
+    this.book = this.rendition = undefined
   }
 
   componentDidMount() {
     this.initBook()
-    if (this.props.handleKeyPress) {
-      document.addEventListener('keyup', this.props.handleKeyPress, false)
-    }
   }
 
   initBook() {
@@ -82,10 +76,7 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
     if (this.book) {
       this.book.destroy()
     }
-    this.book = this.rendition = this.prevPage = this.nextPage = undefined
-    if (this.props.handleKeyPress) {
-      document.removeEventListener('keyup', this.props.handleKeyPress, false)
-    }
+    this.book = this.rendition = undefined
   }
 
   shouldComponentUpdate(nextProps: IEpubViewProps) {
@@ -120,12 +111,6 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
           ...epubOptions,
         })
         this.rendition = rendition
-        this.prevPage = () => {
-          rendition.prev()
-        }
-        this.nextPage = () => {
-          rendition.next()
-        }
         this.registerEvents()
         getRendition && getRendition(rendition)
 
@@ -141,10 +126,9 @@ export class EpubView extends Component<IEpubViewProps, IEpubViewState> {
   }
 
   registerEvents() {
-    const { handleKeyPress, handleTextSelected } = this.props
+    const { handleTextSelected } = this.props
     if (this.rendition) {
       this.rendition.on('locationChanged', this.onLocationChange)
-      this.rendition.on('keyup', handleKeyPress)
       if (handleTextSelected) {
         this.rendition.on('selected', handleTextSelected)
       }
